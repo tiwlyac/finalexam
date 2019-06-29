@@ -3,14 +3,10 @@ package customer
 import (
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"github.com/tiwly/finalexam/database"
 	"github.com/tiwly/finalexam/model"
 )
 
-func PostByIDHandler(c *gin.Context) {
-	db := database.Connect(c)
-	defer db.Close()
-
+func (s *CustomerService) PostByIDHandler(c *gin.Context) {
 	customer := model.Customer{}
 	err := c.ShouldBindJSON(&customer)
 	if err != nil {
@@ -18,7 +14,7 @@ func PostByIDHandler(c *gin.Context) {
 		return
 	}
 
-	stmt, err := db.Prepare("INSERT INTO customers (name, email, status) VALUES ($1, $2, $3) RETURNING id;")
+	stmt, err := s.Database.Prepare("INSERT INTO customers (name, email, status) VALUES ($1, $2, $3) RETURNING id;")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H {"error" : http.StatusText(http.StatusInternalServerError)})
 		return

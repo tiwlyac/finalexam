@@ -3,27 +3,16 @@ package database
 import (
 	"os"
 	"log"
-	"net/http"
 	"database/sql"
-	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq" 
 )
 
-func Connect(c *gin.Context) *sql.DB {
+func Connect() (*sql.DB, error)  {
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL")) 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H {"error" : http.StatusText(http.StatusInternalServerError)})
-	}
-	return db
+	return db, err
 }
 
-func CreateTable() {
-	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
-	if err != nil {
-		log.Fatal("fatal", err.Error())
-	}
-	defer db.Close()
-
+func CreateTable(db *sql.DB) {
 	createTb := `
 	CREATE TABLE IF NOT EXISTS customers(
 		id SERIAL PRIMARY KEY,
@@ -32,9 +21,13 @@ func CreateTable() {
 		status TEXT
 	)
 	`
-	_, err = db.Exec(createTb)
-	if err != nil {
+	if _, err := db.Exec(createTb); err != nil {
 		log.Fatal("Can't create table", err.Error())
 	} 
 }
+
+
+
+
+
 
