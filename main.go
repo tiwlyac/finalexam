@@ -17,7 +17,7 @@ func setupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(checkAuthorization)
 	r.GET("/customers", customer.GetCustomersHandler)
-	r.GET("/customers/:id", customer.GetCustomersHandler)
+	r.GET("/customers/:id", customer.GetCustomersByIDHandler)
 	r.POST("/customers", customer.PostByIDHandler)
 	r.PUT("/customers/:id", customer.PutByIDHandler)
 	r.DELETE("/customers/:id", customer.DeleteHandler)
@@ -26,8 +26,9 @@ func setupRouter() *gin.Engine {
 
 func checkAuthorization(c *gin.Context) {
 	token := c.GetHeader("Authorization")
-	if token != "token2019wrong_token" {
+	if token != "token2019" {
 		c.JSON(http.StatusUnauthorized, gin.H{ "error": http.StatusText(http.StatusUnauthorized) })
+		c.Abort()
 	}
 	c.Next()
 }

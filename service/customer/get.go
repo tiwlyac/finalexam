@@ -38,20 +38,23 @@ func GetCustomersByIDHandler(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H {"error" : http.StatusText(http.StatusBadRequest)})
+		return
 	}
 
 	db := database.Connect(c)
 	defer db.Close()
 
 	customer := model.Customer{}
-	stmt, err := db.Prepare("SELECT id, name, status FROM customers WHERE id=$1;")
+	stmt, err := db.Prepare("SELECT id, name, email, status FROM customers WHERE id=$1;")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H {"error" : http.StatusText(http.StatusInternalServerError)})
+		return
 	}
 
-	err = stmt.QueryRow(id).Scan(&customer.ID, &customer.Name, &customer.Status)
-	if err != nil {
+	row := stmt.QueryRow(id)
+	if err = row.Scan(&customer.ID, &customer.Name, &customer.Email, &customer.Status); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H {"error" : http.StatusText(http.StatusInternalServerError)})
+		return
 	}
 
 	c.JSON(http.StatusOK, customer)
