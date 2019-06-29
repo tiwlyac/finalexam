@@ -3,14 +3,14 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/tiwly/finalexam/database"
-	"github.com/tiwly/finalexam/service"
+	"github.com/tiwly/finalexam/service/customer"
 )
 
 func main() {
 	database.CreateTable()
 	r := gin.Default()
-	r.GET("/customers", service.GetCustomersHandler)
-	r.GET("/customers/:id", service.GetCustomersHandler)
+	r.GET("/customers", customer.GetCustomersHandler)
+	r.GET("/customers/:id", customer.GetCustomersHandler)
 	r.Run(":2019")
 }
 
