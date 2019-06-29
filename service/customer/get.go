@@ -13,7 +13,7 @@ func GetCustomersHandler(c *gin.Context) {
 	defer db.Close()
 
 	customers := []model.Customer{}
-	stmt, err := db.Prepare("SELECT id, name, status FROM customers")
+	stmt, err := db.Prepare("SELECT id, name, status FROM customers;")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H {"error" : http.StatusText(http.StatusInternalServerError)})
 	}
@@ -44,7 +44,7 @@ func GetCustomersByIDHandler(c *gin.Context) {
 	defer db.Close()
 
 	customer := model.Customer{}
-	stmt, err := db.Prepare("SELECT id, name, status FROM customers WHERE id=$1")
+	stmt, err := db.Prepare("SELECT id, name, status FROM customers WHERE id=$1;")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H {"error" : http.StatusText(http.StatusInternalServerError)})
 	}
