@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"github.com/gin-gonic/gin"
 	"github.com/tiwly/finalexam/database"
 	"github.com/tiwly/finalexam/service/customer"
@@ -14,6 +15,7 @@ func main() {
 
 func setupRouter() *gin.Engine {
 	r := gin.Default()
+	r.Use(checkAuthorization)
 	r.GET("/customers", customer.GetCustomersHandler)
 	r.GET("/customers/:id", customer.GetCustomersHandler)
 	r.POST("/customers", customer.PostByIDHandler)
@@ -22,3 +24,10 @@ func setupRouter() *gin.Engine {
 	return r
 }
 
+func checkAuthorization(c *gin.Context) {
+	token := c.GetHeader("Authorization")
+	if token != "token2019wrong_token" {
+		c.JSON(http.StatusUnauthorized, gin.H{ "error": http.StatusText(http.StatusUnauthorized) })
+	}
+	c.Next()
+}
